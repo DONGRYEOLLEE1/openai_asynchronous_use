@@ -37,7 +37,7 @@ async def chat_completion(prompt: str) -> Dict[str, Any]:
     
     return response
 
-async def label_text_async(text: str):
+async def label_text_async(text: str) -> str:
     r"""
     - Asynchronously labels a given text with categories using function of chat_completion.
     - If outputs is resulted "none" in first prompt, the second category(minor category) for that text will automatically be "none".
@@ -45,10 +45,10 @@ async def label_text_async(text: str):
     Args:
         text (str): data to be labeled.
     Returns:
-        second_category: Result in after 2 prompts.
+        second_category (str): Result in after 2 prompts.
     """
     
-    first_prompt = f"""..."""
+    first_prompt = f"""... {text}"""
 
     # Assuming chat_completion returns a result with choices attribute
     result = await chat_completion(first_prompt)
@@ -73,7 +73,7 @@ async def label_text_async(text: str):
     return second_category
 
 
-async def label_text_async_batch(text_batch: List[str]):
+async def label_text_async_batch(text_batch: List[str]) -> List[str]:
     r"""
     Asynchronously labels a batch of texts.
     
@@ -123,7 +123,8 @@ async def main(batch_size: int) -> None:
     f_df.reset_index(drop = True).to_csv("./tmp.csv", index = False)
 
 
+
 if __name__ == "__main__":
     start_time = time.time()
-    asyncio.run(main(batch_size = 5))
+    asyncio.run(main(batch_size = 5))   # tweak batch_size whatever you want
     print(f"end of time: {time.time() - start_time}")
