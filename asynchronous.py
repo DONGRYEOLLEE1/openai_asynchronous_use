@@ -8,7 +8,7 @@ from typing import List
 from packaging import version
 from openai import AsyncOpenAI, OpenAI
 
-if version.parse(openai.__verison__) < version.parse("1.6.0"):
+if version.parse(openai.__version__) < version.parse("1.6.0"):
     raise ValueError("If you wanna use a gpt-4-1106-preview model, Please update version at latest 1.6.0. >> pip install -U openai")
 
 
@@ -82,7 +82,7 @@ async def label_text_async_batch(text_batch: List[str]):
     results = await asyncio.gather(*tasks)
     return results
 
-async def main(batch_size: int = 5) -> None:
+async def main(batch_size: int) -> None:
     r"""
     Main function to process a large dataset of texts asynchronously.
     
