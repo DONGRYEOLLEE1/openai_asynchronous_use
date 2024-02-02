@@ -4,7 +4,7 @@ import asyncio
 import pandas as pd
 
 from tqdm import tqdm
-from typing import List
+from typing import List, Dict, Any
 from packaging import version
 from openai import AsyncOpenAI, OpenAI
 
@@ -16,10 +16,16 @@ if version.parse(openai.__version__) < version.parse("1.6.0"):
 api_key = "..."
 client = AsyncOpenAI(api_key = api_key)     # This is the default and can be omitted
 
-async def chat_completion(prompt: str) -> str:
+async def chat_completion(prompt: str) -> Dict[str, Any]:
     r"""
     - Asynchronously request an openai api. 
     - Detail is [HERE](https://github.com/openai/openai-python/blob/main/README.md)
+    
+    Args:
+        prompt (str): Your prompt.
+    
+    Returns:
+        response (Dict[str, Any]): `openai.AsyncOpenAI.client.chat.completions.create()` response that corresponding to your prompt.
     
     """
     response = await client.chat.completions.create(
