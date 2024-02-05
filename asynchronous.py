@@ -115,12 +115,26 @@ async def main(batch_size: int) -> None:
     for i in tqdm(range(0, len(text_list), batch_size), desc = 'Asynchronous Response Iterator'):
         
         text_batch = text_list[i:i+batch_size]
-        batch_results = await label_text_async_batch(text_batch)    # ex) ["label_1", "label_2", ..., label_{batch_size}], [...], ...
         
+        try:
+            batch_results = await label_text_async_batch(text_batch)    # ex) ["label_1", "label_2", ..., label_{batch_size}], [...], ...
+        
+        except Exception as e:
+            print(f"API Error Occurred: {e}")
+            
+            try:
+                await asyncio.sleep(60)
+                batch_results = await label_text_async_batch(text_batch)
+                
+            except (openai.RateLimitError or openai.Timeout or openai.APIConnectionError or openai.APIError) as e2:
+                print(f"Consecutive Error: {e2}")
+                f_df.reset_index(drop = True).to_csv("./main-tmp.csv", index = False)
+            
+            
         tmp = pd.DataFrame(data = {"text": text_batch, "minor_category": batch_results})
         f_df = pd.concat([f_df, tmp])
-        
-    f_df.reset_index(drop = True).to_csv("./tmp.csv", index = False)
+    
+    f_df.reset_index(drop = True).to_csv("./main.csv", index = False)
 
 
 
