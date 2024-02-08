@@ -6,7 +6,7 @@ import pandas as pd
 from tqdm import tqdm
 from typing import List, Dict, Any
 from packaging import version
-from openai import AsyncOpenAI, OpenAI
+from openai import AsyncOpenAI
 
 if version.parse(openai.__version__) < version.parse("1.6.0"):
     raise ValueError("If you wanna use a gpt-4-1106-preview model, Please update version at latest 1.6.0. >> pip install -U openai")
@@ -117,7 +117,7 @@ async def main(batch_size: int) -> None:
         text_batch = text_list[i:i+batch_size]
         
         try:
-            batch_results = await label_text_async_batch(text_batch)    # ex) ["label_1", "label_2", ..., label_{batch_size}], [...], ...
+            batch_results = await label_text_async_batch(text_batch)    # ex) ["label_1", "label_2", ..., "label_{batch_size}"], [...], ...
         
         except Exception as e:
             print(f"API Error Occurred: {e}")
@@ -130,7 +130,6 @@ async def main(batch_size: int) -> None:
                 print(f"Consecutive Error: {e2}")
                 f_df.reset_index(drop = True).to_csv("./main-tmp.csv", index = False)
             
-            
         tmp = pd.DataFrame(data = {"text": text_batch, "minor_category": batch_results})
         f_df = pd.concat([f_df, tmp])
     
@@ -140,5 +139,5 @@ async def main(batch_size: int) -> None:
 
 if __name__ == "__main__":
     start_time = time.time()
-    asyncio.run(main(batch_size = 5))   # tweak batch_size whatever you want
+    asyncio.run(main(batch_size = 200))   # tweak batch_size whatever you want
     print(f"end of time: {time.time() - start_time}")
